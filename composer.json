@@ -1,0 +1,52 @@
+{
+    "name": "dontdrinkandroot/openid-bundle",
+    "description": "A bridge that provides OpenID capabilities for league/oauth2-server-bundle",
+    "type": "symfony-bundle",
+    "license": "Apache-2.0",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Philip Washington Sorst",
+            "email": "philip@sorst.net",
+            "homepage": "https://sorst.net"
+        }
+    ],
+    "require": {
+        "php": ">=8.4",
+        "league/oauth2-server-bundle": "^1.0",
+        "symfony/config": "^6.4",
+        "symfony/dependency-injection": "^6.4"
+    },
+    "require-dev": {
+        "dontdrinkandroot/symfony-version-enforcer": "^0.1.1",
+        "phpunit/phpunit": "^9.6",
+        "symfony/phpunit-bridge": "^6.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dontdrinkandroot\\OpenIdBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dontdrinkandroot\\OpenIdBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dontdrinkandroot/symfony-version-enforcer": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "symfony": {
+            "require": "6.4.*",
+            "allow-contrib": true
+        },
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}

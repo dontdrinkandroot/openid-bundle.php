@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" colors="true"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+
+    <php>
+        <ini name="memory_limit" value="-1"/>
+        <env name="APP_SECRET" value="c2143e0e6fa7397bf72e127fc8ccf2b5"/>
+        <env name="SHELL_VERBOSITY" value="-1"/>
+        <env name="KERNEL_CLASS" value="Dontdrinkandroot\OpenIdBundle\Tests\TestApp\TestKernel"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0"/>
+        <env name="SYMFONY_PHPUNIT_VERSION" value="9.5"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
+
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
+    </listeners>
+
+</phpunit>
