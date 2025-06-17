@@ -14,6 +14,8 @@
     ],
     "require": {
         "php": ">=8.4",
+        "ext-openssl": "*",
+        "dontdrinkandroot/common": "^0.3",
         "league/oauth2-server-bundle": "^1.0",
         "symfony/config": "^6.4",
         "symfony/dependency-injection": "^6.4"

@@ -5,8 +5,7 @@ namespace Dontdrinkandroot\OpenIdBundle;
 use Override;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class
-DdrOpenIdBundle extends Bundle
+class DdrOpenIdBundle extends Bundle
 {
     #[Override]
     public function getPath(): string

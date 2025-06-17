@@ -1,6 +1,6 @@
 <?php
 
-namespace Dontdrinkandroot\ApiPlatformBundle\DependencyInjection;
+namespace Dontdrinkandroot\OpenIdBundle\DependencyInjection;
 
 use Override;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
