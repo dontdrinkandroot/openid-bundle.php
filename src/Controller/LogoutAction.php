@@ -28,7 +28,8 @@ class LogoutAction extends AbstractController
 {
     public function __construct(
         private readonly ManagerRegistry $registry,
-        private readonly NonceServiceInterface $nonceService
+        private readonly NonceServiceInterface $nonceService,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -45,12 +46,12 @@ class LogoutAction extends AbstractController
 
             $accessTokenId = $this->nonceService->findAccessTokenIdByNonce($nonceClaim);
             if (null === $accessTokenId) {
-                throw new BadRequestHttpException('Invalid nonce');
+                $this->logger->warning('Invalid nonce');
+            } else {
+                $this->removeAccessTokens($accessTokenId);
+                $this->removeRefreshTokens($accessTokenId);
+                $this->nonceService->removeNonceByAccessTokenId($accessTokenId);
             }
-
-            $this->removeAccessTokens($accessTokenId);
-            $this->removeRefreshTokens($accessTokenId);
-            $this->nonceService->removeNonceByAccessTokenId($accessTokenId);
 
             $postLogoutRedirectUri = $request->query->get('post_logout_redirect_uri');
             if (is_string($postLogoutRedirectUri)) {

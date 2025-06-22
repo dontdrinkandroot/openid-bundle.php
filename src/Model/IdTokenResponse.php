@@ -76,7 +76,7 @@ class IdTokenResponse extends BearerTokenResponse
             if ($nonce !== null) {
                 $builder = $builder->withClaim('nonce', $nonce);
                 $this->nonceService->removeNonceByAuthCodeId($authCodeId);
-                $this->nonceService->findNonceByAccessTokenId($accessToken->getIdentifier());
+                $this->nonceService->storeNonceByAccessTokenId($accessToken->getIdentifier(), $nonce);
             }
         }
 

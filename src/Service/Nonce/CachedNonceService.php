@@ -59,10 +59,12 @@ class CachedNonceService implements NonceServiceInterface
         $this->storeAccessTokenIdByNonce($nonce, $accessTokenId);
     }
 
-    private function storeAccessTokenIdByNonce(string $nonce, string $accessTokenId): void {
+    private function storeAccessTokenIdByNonce(string $nonce, string $accessTokenId): void
+    {
         $cacheKey = $this->generateNonceCacheKey($nonce);
         $cacheItem = $this->cacheAdapter->getItem($cacheKey);
         $cacheItem->set($accessTokenId);
+        $this->cacheAdapter->save($cacheItem);
     }
 
     #[Override]
@@ -89,7 +91,8 @@ class CachedNonceService implements NonceServiceInterface
         }
     }
 
-    private function removeAccessTokenIdByNonce(string $nonce): void {
+    private function removeAccessTokenIdByNonce(string $nonce): void
+    {
         $cacheKey = $this->generateNonceCacheKey($nonce);
         $this->cacheAdapter->deleteItem($cacheKey);
     }
@@ -116,7 +119,8 @@ class CachedNonceService implements NonceServiceInterface
         return self::CACHE_KEY_PREFIX_ACCESS_TOKEN . $accessTokenId;
     }
 
-    private function generateNonceCacheKey(string $nonce): string {
+    private function generateNonceCacheKey(string $nonce): string
+    {
         return self::CACHE_KEY_PREFIX_NONCE . $nonce;
     }
 }
