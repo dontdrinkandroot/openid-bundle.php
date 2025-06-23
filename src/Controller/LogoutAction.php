@@ -44,13 +44,17 @@ class LogoutAction extends AbstractController
 
             // TODO: Verify signature
 
-            $accessTokenId = $this->nonceService->findAccessTokenIdByNonce($nonceClaim);
-            if (null === $accessTokenId) {
-                $this->logger->warning('Invalid nonce');
+            if (null !== $nonceClaim) {
+                $accessTokenId = $this->nonceService->findAccessTokenIdByNonce($nonceClaim);
+                if (null === $accessTokenId) {
+                    $this->logger->warning('Invalid nonce');
+                } else {
+                    $this->removeAccessTokens($accessTokenId);
+                    $this->removeRefreshTokens($accessTokenId);
+                    $this->nonceService->removeNonceByAccessTokenId($accessTokenId);
+                }
             } else {
-                $this->removeAccessTokens($accessTokenId);
-                $this->removeRefreshTokens($accessTokenId);
-                $this->nonceService->removeNonceByAccessTokenId($accessTokenId);
+                $this->logger->warning('No nonce found');
             }
 
             $postLogoutRedirectUri = $request->query->get('post_logout_redirect_uri');
