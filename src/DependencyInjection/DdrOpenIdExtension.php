@@ -2,7 +2,8 @@
 
 namespace Dontdrinkandroot\OpenIdBundle\DependencyInjection;
 
-use Dontdrinkandroot\ApiPlatformBundle\Model\DependencyInjection\ParamName;
+use Dontdrinkandroot\OpenIdBundle\Config\DependencyInjection\ParamName;
+use Dontdrinkandroot\OpenIdBundle\Event\Listener\UserResolveListener;
 use Override;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -20,6 +21,11 @@ class DdrOpenIdExtension extends Extension implements PrependExtensionInterface
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.php');
+
+        $container->setParameter(ParamName::WHITELISTED_CLIENTS, $config['whitelisted_clients']);
+
+        $container->getDefinition(UserResolveListener::class)
+            ->setArgument('$userProvider', $config['resolve_user_provider']);
     }
 
     #[Override]

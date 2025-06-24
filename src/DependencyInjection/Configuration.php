@@ -16,6 +16,13 @@ class Configuration implements ConfigurationInterface
 
         // @formatter:off
         $rootNode->children()
+            ->arrayNode('whitelisted_clients')
+                ->scalarPrototype()->end()
+            ->end()
+            ->scalarNode('resolve_user_provider')
+                ->isRequired()
+                ->cannotBeEmpty()
+            ->end()
         ->end();
         // @formatter:on
 

@@ -2,17 +2,21 @@
 
 namespace Dontdrinkandroot\OpenIdBundle\Config;
 
+use Dontdrinkandroot\OpenIdBundle\Config\DependencyInjection\ParamName;
 use Dontdrinkandroot\OpenIdBundle\Config\DependencyInjection\TagName;
 use Dontdrinkandroot\OpenIdBundle\Controller\JwksAction;
 use Dontdrinkandroot\OpenIdBundle\Controller\LogoutAction;
 use Dontdrinkandroot\OpenIdBundle\Controller\OpenidConfigurationAction;
 use Dontdrinkandroot\OpenIdBundle\Controller\UserInfoAction;
+use Dontdrinkandroot\OpenIdBundle\Event\Listener\AuthorizationCodeListener;
 use Dontdrinkandroot\OpenIdBundle\Event\Listener\NonceListener;
+use Dontdrinkandroot\OpenIdBundle\Event\Listener\UserResolveListener;
 use Dontdrinkandroot\OpenIdBundle\Model\IdTokenResponse;
 use Dontdrinkandroot\OpenIdBundle\Service\CryptService;
 use Dontdrinkandroot\OpenIdBundle\Service\Nonce\CachedNonceService;
 use Dontdrinkandroot\OpenIdBundle\Service\Nonce\NonceServiceInterface;
 use Dontdrinkandroot\OpenIdBundle\Service\ScopeProvider\OpenIdScopeProvider;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -67,4 +71,17 @@ return function (ContainerConfigurator $configurator): void {
         ->arg('$nonceService', service(NonceServiceInterface::class))
         ->arg('$cryptService', service(CryptService::class))
         ->tag('kernel.event_listener', ['event' => 'kernel.response', 'method' => 'onKernelResponse']);
+
+    $services->set(UserResolveListener::class)
+        ->tag('kernel.event_listener', ['event' => OAuth2Events::USER_RESOLVE, 'method' => 'onUserResolve']);
+
+    $services->set(AuthorizationCodeListener::class)
+        ->arg('$requestStack', service('request_stack'))
+        ->arg('$twig', service('twig'))
+        ->arg('$formFactory', service('form.factory'))
+        ->arg('$whitelistedClients', param(ParamName::WHITELISTED_CLIENTS))
+        ->tag(
+            'kernel.event_listener',
+            ['event' => OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, 'method' => 'onAuthorizationRequestResolve']
+        );
 };

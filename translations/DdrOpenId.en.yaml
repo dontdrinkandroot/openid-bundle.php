@@ -1,0 +1,10 @@
+grant:
+    heading: Grant access to client
+    description: "The application %client% wants to access the following information:"
+action:
+    grant: Zulassen
+    deny: Ablehnen
+scope:
+    email: Email
+    profile: Profile
+    openid: User Identificator

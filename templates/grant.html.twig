@@ -1,0 +1,26 @@
+{% extends '@DdrOpenId/base.html.twig' %}
+{% trans_default_domain 'DdrOpenId' %}
+
+{% block ddr_openid_title %}{{ 'grant.heading'|trans }}{% endblock ddr_openid_title %}
+
+{% block ddr_openid_header %}
+    <div class="py-3 mb-4 border-bottom d-flex">
+        <h1 class="mb-0 align-self-center flex-fill">{{ 'grant.heading'|trans }}</h1>
+    </div>
+{% endblock ddr_openid_header %}
+
+{% block ddr_openid_content %}
+
+    <p>{{ 'grant.description'|trans({'%client%': client.name}) }}</p>
+
+    <ul>
+        {% for scope in scopes %}
+            <li>{{ ('scope.' ~ scope)|trans }}</li>
+        {% endfor %}
+    </ul>
+
+    {{ form_start(form) }}
+        {{ form_widget(form.approve) }}
+        {{ form_widget(form.deny) }}
+    {{ form_end(form) }}
+{% endblock ddr_openid_content %}
