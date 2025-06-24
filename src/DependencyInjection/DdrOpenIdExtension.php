@@ -9,6 +9,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class DdrOpenIdExtension extends Extension implements PrependExtensionInterface
@@ -25,7 +26,7 @@ class DdrOpenIdExtension extends Extension implements PrependExtensionInterface
         $container->setParameter(ParamName::WHITELISTED_CLIENTS, $config['whitelisted_clients']);
 
         $container->getDefinition(UserResolveListener::class)
-            ->setArgument('$userProvider', $config['resolve_user_provider']);
+            ->setArgument('$userProvider', new Reference($config['resolve_user_provider']));
     }
 
     #[Override]

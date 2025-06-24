@@ -73,6 +73,7 @@ return function (ContainerConfigurator $configurator): void {
         ->tag('kernel.event_listener', ['event' => 'kernel.response', 'method' => 'onKernelResponse']);
 
     $services->set(UserResolveListener::class)
+        ->arg('$passwordHasher', service('security.user_password_hasher'))
         ->tag('kernel.event_listener', ['event' => OAuth2Events::USER_RESOLVE, 'method' => 'onUserResolve']);
 
     $services->set(AuthorizationCodeListener::class)
