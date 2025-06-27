@@ -37,7 +37,7 @@ class DdrOpenIdExtension extends Extension implements PrependExtensionInterface
         if (array_key_exists('NelmioCorsBundle', $bundles)) {
             $container->prependExtensionConfig('nelmio_cors', [
                 'paths' => [
-                    '^/(.well-known/(openid-configuration|jwks.json)|oauth2/token)' => [
+                    '^/(.well-known/(openid-configuration|jwks.json)|oauth2/(token|userinfo))' => [
                         'allow_credentials' => true,
                         'allow_origin' => ['*'],
                     ]
