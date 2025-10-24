@@ -3,7 +3,9 @@
 namespace Dontdrinkandroot\OpenIdBundle\DependencyInjection;
 
 use Dontdrinkandroot\OpenIdBundle\Config\DependencyInjection\ParamName;
+use Dontdrinkandroot\OpenIdBundle\Config\DependencyInjection\TagName;
 use Dontdrinkandroot\OpenIdBundle\Event\Listener\UserResolveListener;
+use Dontdrinkandroot\OpenIdBundle\Service\ScopeProvider\ScopeProviderInterface;
 use Override;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,6 +29,9 @@ class DdrOpenIdExtension extends Extension implements PrependExtensionInterface
 
         $container->getDefinition(UserResolveListener::class)
             ->setArgument('$userProvider', new Reference($config['resolve_user_provider']));
+
+        $container->registerForAutoconfiguration(ScopeProviderInterface::class)
+            ->addTag(TagName::SCOPE_PROVIDER);
     }
 
     #[Override]
