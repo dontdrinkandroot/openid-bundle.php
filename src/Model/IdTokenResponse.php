@@ -11,7 +11,6 @@ use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token\Builder;
-use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
@@ -69,10 +68,10 @@ class IdTokenResponse extends BearerTokenResponse
         /**
          * @see NonceListener
          */
-        if (null !== ($code = $request?->request->get('code'))) {
+        if (null !== ($code = $request?->request->get('code')) && is_string($code) && '' !== $code) {
             $decodedCode = $this->cryptService->decryptCode($code);
-            $authCodeId = $decodedCode['auth_code_id'];
-            $nonce = $this->nonceService->findNonceByAuthCodeId($authCodeId);
+            $authCodeId = is_string($decodedCode['auth_code_id'] ?? null) ? $decodedCode['auth_code_id'] : null;
+            $nonce = null !== $authCodeId ? $this->nonceService->findNonceByAuthCodeId($authCodeId) : null;
             if ($nonce !== null) {
                 $builder = $builder->withClaim('nonce', $nonce);
                 $this->nonceService->removeNonceByAuthCodeId($authCodeId);

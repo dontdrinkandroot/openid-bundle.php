@@ -13,8 +13,13 @@ class CryptService
         $this->encryptionKey = $encryptionKey;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function decryptCode(string $code): ?array
     {
-        return json_decode($this->decrypt($code), true);
+        $decoded = json_decode($this->decrypt($code), true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 }

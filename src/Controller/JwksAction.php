@@ -5,7 +5,6 @@ namespace Dontdrinkandroot\OpenIdBundle\Controller;
 use Dontdrinkandroot\Common\Asserted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class JwksAction extends AbstractController
@@ -19,7 +18,12 @@ class JwksAction extends AbstractController
 
     public function __invoke(): Response
     {
-        $details = openssl_pkey_get_details(openssl_pkey_get_public($this->publicKey));
+        $key = openssl_pkey_get_public($this->publicKey);
+        if (false === $key) {
+            return new JsonResponse(['error' => 'Invalid public key format'], 500);
+        }
+
+        $details = openssl_pkey_get_details($key);
         if (false === $details || !isset($details['rsa'])) {
             return new JsonResponse(['error' => 'Invalid public key format'], 500);
         }

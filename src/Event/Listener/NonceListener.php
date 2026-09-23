@@ -38,11 +38,6 @@ class NonceListener
         return 'oauth2_authorize' === $request->attributes->get('_route');
     }
 
-    private function isTokenRequest(Request $request): bool
-    {
-        return 'oauth2_token' === $request->attributes->get('_route');
-    }
-
     private function getNonce(Request $request): ?string
     {
         return Asserted::stringOrNull($request->query->get('nonce'));
@@ -59,6 +54,6 @@ class NonceListener
 
         parse_str($queryString, $params);
 
-        return $params['code'] ?? null;
+        return Asserted::stringOrNull($params['code'] ?? null);
     }
 }
