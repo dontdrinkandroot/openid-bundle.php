@@ -4,3 +4,7 @@ parameters:
         - src
         - tests
     checkMissingOverrideMethodAttribute: true
+    composerAnalysis:
+        ignoreAllShadowDeps: true
+        ignoreAllUnusedDeps: true
+        ignoreAllProdDepsInDev: true

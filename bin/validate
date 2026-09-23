@@ -1,0 +1,104 @@
+#!/bin/bash
+
+CRAP_THRESHOLD=${CRAP_THRESHOLD:-30}
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+COVERAGE_DIR="$PROJECT_DIR/coverage"
+CRAP_FILE="$COVERAGE_DIR/crap4j.xml"
+
+# COLUMNS must match the value in phpunit.xml.dist (120).
+# ParaTest does not inherit environment variables set via phpunit.xml.dist <env>,
+# so we must pass it explicitly. Without this, console output word-wrapping differs
+# between sequential PHPUnit runs and parallel ParaTest runs, causing test failures.
+export COLUMNS=${COLUMNS:-120}
+
+if [ -x "$PROJECT_DIR/vendor/bin/paratest" ]; then
+    TEST_COMMAND="$PROJECT_DIR/vendor/bin/paratest"
+else
+    TEST_COMMAND="$PROJECT_DIR/vendor/bin/phpunit"
+fi
+
+set +e
+
+phpunit_failed=0
+phpstan_failed=0
+crap_failed=0
+
+echo "=== Running PHPUnit with CRAP analysis ==="
+cd "$PROJECT_DIR" || exit 1
+XDEBUG_MODE=coverage "$TEST_COMMAND" --coverage-crap4j="$PROJECT_DIR/crap4j.xml" || phpunit_failed=1
+
+echo ""
+echo "=== Running PHPStan ==="
+vendor/bin/phpstan analyse || phpstan_failed=1
+
+echo ""
+echo "=== Evaluating CRAP Index (threshold: $CRAP_THRESHOLD) ==="
+if [ -f "$PROJECT_DIR/crap4j.xml" ]; then
+    violations=$(php -r '
+        $threshold = (int)$argv[1];
+        $file = $argv[2];
+
+        $xml = simplexml_load_file($file);
+        if ($xml === false) {
+            fwrite(STDERR, "ERROR: Unable to parse CRAP report\n");
+            exit(2);
+        }
+
+        $violations = [];
+        foreach ($xml->methods->method as $method) {
+            $crap = (float)$method->crap;
+            if ($crap >= $threshold) {
+                $violations[] = [
+                    "class" => (string)$method->className,
+                    "method" => (string)$method->methodName,
+                    "crap" => $crap,
+                    "complexity" => (int)$method->complexity,
+                    "coverage" => (float)$method->coverage,
+                ];
+            }
+        }
+
+        usort($violations, fn($a, $b) => $b["crap"] <=> $a["crap"]);
+
+        if (empty($violations)) {
+            echo "No CRAP violations found\n";
+            exit(0);
+        }
+
+        printf("%-60s %-30s %8s %12s %10s\n", "Class", "Method", "CRAP", "Complexity", "Coverage");
+        echo str_repeat("-", 125) . "\n";
+
+        foreach ($violations as $v) {
+            printf(
+                "%-60s %-30s %8.2f %12d %9.2f%%\n",
+                $v["class"],
+                $v["method"],
+                $v["crap"],
+                $v["complexity"],
+                $v["coverage"]
+            );
+        }
+
+        echo "\nFound " . count($violations) . " CRAP violation(s)\n";
+        exit(1);
+    ' "$CRAP_THRESHOLD" "$PROJECT_DIR/crap4j.xml")
+    crap_output_exit=$?
+    echo "$violations"
+    if [ $crap_output_exit -ne 0 ]; then
+        crap_failed=1
+    fi
+else
+    echo "ERROR: CRAP report not found at $PROJECT_DIR/crap4j.xml"
+    echo "Make sure PHPUnit ran with coverage enabled."
+    crap_failed=1
+fi
+
+echo ""
+echo "=== Summary ==="
+[ $phpunit_failed -eq 0 ] && echo "PHPUnit: PASSED" || echo "PHPUnit: FAILED"
+[ $phpstan_failed -eq 0 ] && echo "PHPStan: PASSED" || echo "PHPStan: FAILED"
+[ $crap_failed -eq 0 ] && echo "CRAP Index: PASSED" || echo "CRAP Index: FAILED"
+
+if [ $phpunit_failed -ne 0 ] || [ $phpstan_failed -ne 0 ] || [ $crap_failed -ne 0 ]; then
+    exit 1
+fi

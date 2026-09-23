@@ -1,0 +1,14 @@
+{
+    "phpunit": {
+        "command": "vendor/bin/phpunit {args}",
+        "description": "Run PHPUnit tests (phpunit.xml.dist), pass args like --filter to narrow down"
+    },
+    "phpstan": {
+        "command": "vendor/bin/phpstan analyse {args}",
+        "description": "Run PHPStan static analysis (phpstan.neon), pass args like --level or paths"
+    },
+    "validate": {
+        "command": "bin/validate",
+        "description": "Run full validation: PHPUnit with coverage (CRAP analysis), PHPStan, CRAP threshold check"
+    }
+}

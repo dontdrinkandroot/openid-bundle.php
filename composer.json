@@ -24,7 +24,13 @@
     },
     "require-dev": {
         "dontdrinkandroot/symfony-version-enforcer": "^0.1.1",
+        "pb30/phpstan-composer-analysis": "^1.1",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^12.5",
+        "shipmonk/composer-dependency-analyser": "^1.8",
         "symfony/runtime": "^7"
     },
     "autoload": {
