@@ -2,10 +2,8 @@
 
 namespace Dontdrinkandroot\OpenIdBundle\Service\Nonce;
 
-use Dontdrinkandroot\OpenIdBundle\Service\CryptService;
 use Override;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 class CachedNonceService implements NonceServiceInterface
 {
@@ -82,10 +80,11 @@ class CachedNonceService implements NonceServiceInterface
     #[Override]
     public function removeNonceByAccessTokenId(string $accessTokenId): void
     {
+        $nonce = $this->findNonceByAccessTokenId($accessTokenId);
+
         $cacheKey = $this->generateAccessTokenCacheKey($accessTokenId);
         $this->cacheAdapter->deleteItem($cacheKey);
 
-        $nonce = $this->findNonceByAccessTokenId($accessTokenId);
         if (null !== $nonce) {
             $this->removeAccessTokenIdByNonce($nonce);
         }
