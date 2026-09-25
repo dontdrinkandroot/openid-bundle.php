@@ -3,7 +3,6 @@
 namespace Dontdrinkandroot\OpenIdBundle\Controller;
 
 use Dontdrinkandroot\OpenIdBundle\Config\RouteName;
-use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,8 +26,11 @@ class OpenidConfigurationAction extends AbstractController
             'end_session_endpoint' => $this->urlGenerator->generate(RouteName::LOGOUT, [], UrlGeneratorInterface::ABSOLUTE_URL),
             'jwks_uri' => $this->urlGenerator->generate(RouteName::JWKS, [], UrlGeneratorInterface::ABSOLUTE_URL),
             'subject_types_supported' => ['public'],
-            'supported_scopes' => ['openid','profile','api'], // TODO: Try to get it from league config
+            'scopes_supported' => ['openid', 'profile', 'api'],
+            // TODO: Try to get it from league config
             'grant_types_supported' => ['authorization_code','refresh_token','password','client_credentials'], // TODO: Try to get it from league config
+            'response_types_supported' => ['code'],
+            'id_token_signing_alg_values_supported' => ['RS256'],
         ]);
     }
 }

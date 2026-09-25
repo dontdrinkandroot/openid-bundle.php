@@ -3,6 +3,9 @@ parameters:
     paths:
         - src
         - tests
+    excludePaths:
+        # Auto-generated at container compile time by PhpConfigReferenceDumpPass (symfony 7.4).
+        - tests/TestApp/config/reference.php
     checkMissingOverrideMethodAttribute: true
     composerAnalysis:
         ignoreAllShadowDeps: true
